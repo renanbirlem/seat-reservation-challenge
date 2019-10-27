@@ -1,0 +1,16 @@
+.main {
+  display: flex;
+}
+
+.menu {
+  flex: 1;
+  flex-direction: column;
+}
+
+.content {
+  flex: 3;
+}
+
+.legends {
+  flex: 1;
+}
