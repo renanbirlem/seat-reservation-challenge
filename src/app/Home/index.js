@@ -109,30 +109,27 @@ function App() {
       if (clone[rowIndex][seatIndex].status === "possible") {
         clone[rowIndex][seatIndex].status = "booked";
 
-        // const maxIndex = () => {
-        //   const max = Number(seatIndex) + Number(numberOfSeats) - 1;
-        //   return max > clone[rowIndex][seatIndex].length
-        //     ? clone[rowIndex][seatIndex]
-        //     : max;
-        // };
-        // const minIndex = () => {
-        //   const min = Number(seatIndex) - Number(numberOfSeats);
-        //   return min <= 0 ? 0 : min;
-        // };
+        const minIndex = () => {
+          const min = Number(seatIndex) + 1 - Number(numberOfSeats);
+          return min <= 0 ? 0 : min;
+        };
 
-        // console.log(minIndex(), maxIndex());
+        const maxIndex = () => {
+          const max = Number(seatIndex) + Number(numberOfSeats);
+          return max > clone[rowIndex].length ? clone[rowIndex].length : max;
+        };
 
-        // for (let index = seatIndex + 1; index < maxIndex; index++) {
-        //   if (bookedCounter !== numberOfSeats) {
-        //     if (
-        //       clone[rowIndex][index] &&
-        //       clone[rowIndex][index].status === "possible"
-        //     ) {
-        //       clone[rowIndex][index].status = "booked";
-        //       bookedCounter++;
-        //     }
-        //   }
-        // }
+        for (let index = minIndex(); index < maxIndex(); index++) {
+          if (bookedCounter < numberOfSeats) {
+            if (
+              clone[rowIndex][index] &&
+              clone[rowIndex][index].status === "possible"
+            ) {
+              clone[rowIndex][index].status = "booked";
+              bookedCounter++;
+            }
+          }
+        }
 
         setSeatingArea(analyze);
       }
