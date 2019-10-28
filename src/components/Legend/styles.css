@@ -1,0 +1,34 @@
+.legend {
+  display: flex;
+  flex-direction: row;
+}
+
+.color {
+  height: 25px;
+  width: 25px;
+  border-radius: 5px;
+  margin-right: 20px;
+  margin-bottom: 15px;
+  border: 1px solid gray;
+}
+
+.text {
+  color: gray;
+  line-height: 25px;
+}
+
+.booked {
+  background-color: darkgreen;
+}
+
+.possible {
+  background-color: lightgreen;
+}
+
+.available {
+  background-color: white;
+}
+
+.unavailable {
+  background-color: #ccc;
+}
