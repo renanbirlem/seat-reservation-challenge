@@ -3,3 +3,24 @@
   padding-top: 20px;
   border-top: 1px solid #ccc;
 }
+
+.timings {
+  display: flex;
+  flex-flow: row wrap;
+  text-transform: uppercase;
+}
+
+.timing-item {
+  justify-content: center;
+  border: 1px solid #ccc;
+  padding: 7px;
+  margin-right: 15px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.timing-item.checked {
+  color: white;
+  background-color: darkgreen;
+}

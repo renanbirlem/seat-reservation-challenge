@@ -4,7 +4,12 @@ import SelectInput from "../../../../components/SelectInput";
 export default function MovieSelector(props) {
   return (
     <div>
-      <SelectInput options={props.movies} placeholder="Select movie" />
+      <SelectInput
+        onChange={event => props.handleChange(event)}
+        value={props.selectedMovie}
+        options={props.movies}
+        placeholder="Select movie"
+      />
     </div>
   );
 }

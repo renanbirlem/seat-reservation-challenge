@@ -15,6 +15,7 @@ import seatsJSON from "../../data/seats.json";
 import moviesJSON from "../../data/movies.json";
 import theatersJSON from "../../data/theaters.json";
 import rowsJSON from "../../data/rows.json";
+import timingsJSON from "../../data/timings";
 
 function App() {
   const [movies, setMovies] = useState(moviesJSON);
@@ -24,12 +25,15 @@ function App() {
   const [validated, setValidated] = useState(false);
   const [analyzed, setAnalyzed] = useState(false);
 
+  const [selectedTiming, setSelectedTiming] = useState(null);
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [selectedTheater, setSelectedTheater] = useState(null);
+
   const [seatingArea, setSeatingArea] = useState(seatsJSON.reverse());
   const [randomSeats, setRandomSeats] = useState([]);
   const [possibleSeats, setPossibleSeats] = useState([]);
 
   const fillRandomSeats = () => {
-    console.log("fillRandomSeats");
     const randonSeats = Object.values(seatingArea).map(row =>
       row.map(seat => {
         if (Boolean(Math.random() >= 0.5)) {
@@ -44,6 +48,22 @@ function App() {
   };
 
   useEffect(() => fillRandomSeats(), []);
+
+  useEffect(() => {
+    handleValidation();
+  }, [numberOfSeats]);
+
+  const handleChangeMovie = event => {
+    setSelectedMovie(event.target.value);
+  };
+
+  const handleChangeTheater = event => {
+    setSelectedTheater(event.target.value);
+  };
+
+  const handleChangeTiming = timing => {
+    setSelectedTiming(timing);
+  };
 
   const handleChangeSeatsNumber = event => {
     console.log("cchange", event.target.value);
@@ -86,15 +106,15 @@ function App() {
   };
 
   const handleValidation = () => {
-    console.log("handleValidation ", numberOfSeats);
-    if (numberOfSeats > 0) {
+    if (
+      numberOfSeats > 0 &&
+      selectedMovie &&
+      selectedTheater &&
+      selectedTiming
+    ) {
       setValidated(true);
     }
   };
-
-  useEffect(() => {
-    handleValidation();
-  }, [numberOfSeats]);
 
   const handleClear = () => {
     setSeatingArea(randomSeats);
@@ -139,9 +159,21 @@ function App() {
   return (
     <div className="main">
       <aside className="menu">
-        <MovieSelector movies={movies} />
-        <TheaterSelector theaters={theaters} />
-        <AvailableTimings />
+        <MovieSelector
+          movies={movies}
+          handleChange={event => handleChangeMovie(event)}
+          selectedMovie={selectedMovie}
+        />
+        <TheaterSelector
+          theaters={theaters}
+          handleChange={event => handleChangeTheater(event)}
+          selectedTheater={selectedTheater}
+        />
+        <AvailableTimings
+          timings={timingsJSON}
+          handleChange={handleChangeTiming}
+          selectedTiming={selectedTiming}
+        />
         <NumberOfSeats
           numberOfSeats={numberOfSeats}
           handleChange={event => handleChangeSeatsNumber(event)}
