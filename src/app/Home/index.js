@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./styles.css";
 
 import _ from "lodash";
+import { searchInline, searchAboveOrBelow } from "../../utils/matrixUtils";
 
 import MovieSelector from "./components/MovieSelector";
 import TheaterSelector from "./components/TheaterSelector";
@@ -22,7 +23,7 @@ function App() {
   const [theaters, setTheaters] = useState(theatersJSON);
   const [rows, setRows] = useState(rowsJSON);
   const [numberOfSeats, setNumberOfSeats] = useState(0);
-  const [validated, setValidated] = useState(false);
+  const [validated, setValidated] = useState(true);
   const [analyzed, setAnalyzed] = useState(false);
 
   const [selectedTiming, setSelectedTiming] = useState(null);
@@ -66,36 +67,22 @@ function App() {
   };
 
   const handleChangeSeatsNumber = event => {
-    console.log("cchange", event.target.value);
     setNumberOfSeats(event.target.value);
   };
 
   const handleConfirm = () => {
-    console.log("handleConfirm", numberOfSeats);
     handleClear();
     setAnalyzed(true);
-    const inlinePossibles = [];
     const analyze = _.cloneDeep(randomSeats);
+    const possibles = Boolean(numberOfSeats % 2)
+      ? inlineAnalyze(analyze)
+      : multilineAnalyze(analyze);
 
-    Object.values(analyze).map((row, rowIndex) => {
-      let availableSeats = [];
-
-      row.map((seat, seatIndex) => {
-        if (seat.status === "available") {
-          availableSeats.push({ row: rowIndex, seat: seatIndex });
-          if (availableSeats.length >= numberOfSeats) {
-            inlinePossibles.push(availableSeats);
-          }
-        } else {
-          availableSeats = [];
-        }
-
-        return seat;
-      });
-    });
+    // const possibles =
+    //   numberOfSeats < 4 ? inlineAnalyze(analyze) : multilineAnalyze(analyze);
 
     const newSeats = { ...analyze };
-    Object.values(inlinePossibles).map(row => {
+    Object.values(possibles).map(row => {
       row.map(seat => {
         newSeats[seat.row][seat.seat].status = "possible";
       });
@@ -103,6 +90,62 @@ function App() {
 
     setSeatingArea(newSeats);
     setPossibleSeats(newSeats);
+  };
+
+  const inlineAnalyze = rows => {
+    let possibles = [];
+
+    // search in the same row
+    const sameRow = searchInline(rows, numberOfSeats);
+    possibles = [...sameRow];
+
+    return possibles;
+  };
+
+  const multilineAnalyze = rows => {
+    // search in the same row
+    const sameRow = searchInline(rows, numberOfSeats);
+    const inlinePossibles = [...sameRow];
+
+    // search mod (ex. 2x2)
+    const sameModRow = searchInline(rows, numberOfSeats / 2);
+    const inlineModPossibles = [...sameModRow];
+
+    const aboveModPossibles = searchAboveOrBelow(
+      inlineModPossibles,
+      rows,
+      numberOfSeats,
+      "above"
+    );
+
+    const belowModPossibles = searchAboveOrBelow(
+      inlineModPossibles,
+      rows,
+      numberOfSeats,
+      "below"
+    );
+
+    const abovePossibles = searchAboveOrBelow(
+      inlinePossibles,
+      rows,
+      numberOfSeats,
+      "above"
+    );
+
+    const belowPossibles = searchAboveOrBelow(
+      inlinePossibles,
+      rows,
+      numberOfSeats,
+      "below"
+    );
+
+    return [
+      ...inlinePossibles,
+      ...abovePossibles,
+      ...belowPossibles,
+      ...aboveModPossibles,
+      ...belowModPossibles
+    ];
   };
 
   const handleValidation = () => {
