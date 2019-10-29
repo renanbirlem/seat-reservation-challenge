@@ -17,12 +17,14 @@ import moviesJSON from "../../data/movies.json";
 import theatersJSON from "../../data/theaters.json";
 import rowsJSON from "../../data/rows.json";
 import timingsJSON from "../../data/timings";
+import matrixJSON from "../../data/matrix";
 
 function App() {
   const [movies, setMovies] = useState(moviesJSON);
   const [theaters, setTheaters] = useState(theatersJSON);
   const [rows, setRows] = useState(rowsJSON);
   const [numberOfSeats, setNumberOfSeats] = useState(0);
+  // trocar p/ falso
   const [validated, setValidated] = useState(true);
   const [analyzed, setAnalyzed] = useState(false);
 
@@ -77,9 +79,6 @@ function App() {
     const possibles = Boolean(numberOfSeats % 2)
       ? inlineAnalyze(analyze)
       : multilineAnalyze(analyze);
-
-    // const possibles =
-    //   numberOfSeats < 4 ? inlineAnalyze(analyze) : multilineAnalyze(analyze);
 
     const newSeats = { ...analyze };
     Object.values(possibles).map(row => {
@@ -163,15 +162,40 @@ function App() {
     setSeatingArea(randomSeats);
   };
 
-  const handleSelectSeat = ({ rowIndex, seatIndex }) => {
-    if (analyzed) {
-      const clone = _.cloneDeep(Object.values(possibleSeats));
-      const analyze = clone;
-      let bookedCounter = 1;
+  const toggleHoverOn = ({ rowIndex, seatIndex, status }) => {
+    if (status === "possible" && analyzed) {
+      let analyze = _.cloneDeep(Object.values(possibleSeats));
+      let bookedCounter = 0;
+      let multiline = false;
 
-      if (clone[rowIndex][seatIndex].status === "possible") {
-        clone[rowIndex][seatIndex].status = "booked";
+      const testMatrix = matrixJSON;
 
+      testMatrix.forEach(test => {
+        let testMatches = 0;
+        const testOneAnalyze = _.cloneDeep(analyze);
+
+        test.forEach(({ row, seat }) => {
+          if (
+            testOneAnalyze[rowIndex + row] &&
+            testOneAnalyze[rowIndex + row][seatIndex + seat] &&
+            testOneAnalyze[rowIndex + row][seatIndex + seat].status ===
+              "possible"
+          ) {
+            testOneAnalyze[rowIndex + row][seatIndex + seat].status = "booked";
+            testMatches++;
+          }
+        });
+
+        if (Number(testMatches) === Number(numberOfSeats)) {
+          analyze = Object.assign([], analyze, testOneAnalyze);
+          multiline = true;
+        }
+      });
+
+      if (multiline) {
+        setSeatingArea(analyze);
+        return;
+      } else {
         const minIndex = () => {
           const min = Number(seatIndex) + 1 - Number(numberOfSeats);
           return min <= 0 ? 0 : min;
@@ -179,16 +203,18 @@ function App() {
 
         const maxIndex = () => {
           const max = Number(seatIndex) + Number(numberOfSeats);
-          return max > clone[rowIndex].length ? clone[rowIndex].length : max;
+          return max > analyze[rowIndex].length
+            ? analyze[rowIndex].length
+            : max;
         };
 
         for (let index = minIndex(); index < maxIndex(); index++) {
           if (bookedCounter < numberOfSeats) {
             if (
-              clone[rowIndex][index] &&
-              clone[rowIndex][index].status === "possible"
+              analyze[rowIndex][index] &&
+              analyze[rowIndex][index].status === "possible"
             ) {
-              clone[rowIndex][index].status = "booked";
+              analyze[rowIndex][index].status = "booked";
               bookedCounter++;
             }
           }
@@ -196,6 +222,12 @@ function App() {
 
         setSeatingArea(analyze);
       }
+    }
+  };
+
+  const toggleHoverOff = () => {
+    if (analyzed) {
+      setSeatingArea(possibleSeats);
     }
   };
 
@@ -230,7 +262,10 @@ function App() {
         <SeatingArea
           rows={rows}
           seats={seatingArea}
-          handleSelectSeat={handleSelectSeat}
+          toggleHover={({ rowIndex, seatIndex, status }) =>
+            toggleHoverOn({ rowIndex, seatIndex, status })
+          }
+          toggleHoverOff={() => toggleHoverOff()}
         />
       </div>
       <aside className="legends">

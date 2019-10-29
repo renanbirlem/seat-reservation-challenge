@@ -15,20 +15,28 @@ export default function SeatingArea(props) {
     <div className="seating-container">
       <div className="seating-main">
         <div className="prime">
-          <p>Prime - Rs 230.00</p>
+          <p className="prime-text">Prime - Rs 230.00</p>
           <div className="seating-area">
             {prime.map((row, rowIndex) => (
               <div key={rowIndex} className="row">
                 <div className="rowNumber">{primeRows[rowIndex]}</div>
-                {row.map((seat, seatIndex) => (
-                  <div
-                    key={seatIndex}
-                    onClick={() =>
-                      props.handleSelectSeat({ rowIndex, seatIndex })
-                    }
-                    className={"seat " + seat.status}
-                  />
-                ))}
+                {row.map((seat, seatIndex) => {
+                  return (
+                    <div
+                      key={seatIndex}
+                      style={props.bookedStyle}
+                      className={"seat " + seat.status}
+                      onMouseEnter={() =>
+                        props.toggleHover({
+                          rowIndex,
+                          seatIndex,
+                          status: seat.status
+                        })
+                      }
+                      onMouseLeave={() => props.toggleHoverOff()}
+                    />
+                  );
+                })}
               </div>
             ))}
           </div>
@@ -42,13 +50,15 @@ export default function SeatingArea(props) {
                 {row.map((seat, seatIndex) => (
                   <div
                     key={seatIndex}
-                    onClick={() =>
-                      props.handleSelectSeat({
+                    className={"seat " + seat.status}
+                    onMouseEnter={() =>
+                      props.toggleHover({
                         rowIndex: rowIndex + 9,
-                        seatIndex
+                        seatIndex,
+                        status: seat.status
                       })
                     }
-                    className={"seat " + seat.status}
+                    onMouseLeave={() => props.toggleHoverOff()}
                   />
                 ))}
               </div>

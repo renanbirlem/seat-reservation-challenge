@@ -1,0 +1,32 @@
+[
+  [
+    { "row": 0, "seat": 0 },
+    { "row": 0, "seat": 1 },
+    { "row": 1, "seat": 0 },
+    { "row": 1, "seat": 1 }
+  ],
+  [
+    { "row": 0, "seat": 0 },
+    { "row": 0, "seat": -1 },
+    { "row": -1, "seat": -1 },
+    { "row": -1, "seat": 0 }
+  ],
+  [
+    { "row": 0, "seat": 0 },
+    { "row": -1, "seat": 0 },
+    { "row": -1, "seat": 1 },
+    { "row": 0, "seat": 1 }
+  ],
+  [
+    { "row": 0, "seat": 0 },
+    { "row": 0, "seat": 1 },
+    { "row": -1, "seat": 1 },
+    { "row": -1, "seat": 0 }
+  ],
+  [
+    { "row": 0, "seat": 0 },
+    { "row": 0, "seat": -1 },
+    { "row": 1, "seat": -1 },
+    { "row": 1, "seat": 0 }
+  ]
+]

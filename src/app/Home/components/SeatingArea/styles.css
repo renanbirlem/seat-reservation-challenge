@@ -20,8 +20,8 @@
 }
 
 .rowNumber {
-  margin-right: 10px;
   line-height: 30px;
+  width: 20px;
 }
 
 .seat {
@@ -52,4 +52,8 @@
 
 .seat.unavailable {
   background-color: #ccc;
+}
+
+.prime-text {
+  margin-top: 0px;
 }
