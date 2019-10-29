@@ -25,7 +25,7 @@ function App() {
   const [rows, setRows] = useState(rowsJSON);
   const [numberOfSeats, setNumberOfSeats] = useState(0);
   // trocar p/ falso
-  const [validated, setValidated] = useState(true);
+  const [validated, setValidated] = useState(false);
   const [analyzed, setAnalyzed] = useState(false);
 
   const [selectedTiming, setSelectedTiming] = useState(null);
